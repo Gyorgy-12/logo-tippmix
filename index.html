@@ -1245,6 +1245,85 @@
         transform: scale(1.2);
       }
     }
+
+    .mobile-after-quiz {
+      display: none;
+    }
+
+    @media (max-width: 700px) {
+      .layout {
+        gap: 10px;
+      }
+
+      .mobile-after-quiz {
+        display: block;
+        order: 3;
+      }
+
+      .layout > .panel:not(.mobile-after-quiz) {
+        order: 1;
+      }
+
+      .quiz-card {
+        order: 2;
+      }
+
+      .layout > .panel:not(.mobile-after-quiz) .group:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: 0;
+      }
+
+      .mobile-after-quiz:empty {
+        display: none;
+      }
+
+      .mobile-after-quiz .group:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: 0;
+      }
+
+      .quiz-card {
+        gap: 10px;
+        padding: 11px;
+      }
+
+      .topline {
+        min-height: 0;
+      }
+
+      .media-wrap {
+        height: clamp(215px, 45vh, 330px);
+      }
+
+      .answer-area {
+        gap: 9px;
+      }
+
+      .input-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .input-row input {
+        grid-column: 1 / -1;
+        min-height: 42px;
+      }
+
+      .input-row .primary,
+      .input-row .ghost {
+        min-width: 0;
+        width: 100%;
+        min-height: 42px;
+        padding-inline: 8px;
+        text-align: center;
+      }
+
+      .message {
+        min-height: 22px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1293,7 +1372,7 @@
           </div>
         </div>
 
-        <div class="group">
+        <div class="group" id="statsGroup">
           <span class="label">Statisztika</span>
           <div class="stats">
             <div class="stat"><b id="score">0</b><span>pont</span></div>
@@ -1328,6 +1407,7 @@
           <div class="revealed" id="revealed"></div>
         </div>
       </section>
+      <aside class="panel mobile-after-quiz" id="mobileAfterQuiz" aria-label="Mobil statisztika és arcade"></aside>
     </section>
   </main>
 
@@ -25035,7 +25115,38 @@
       }
       if ($("arcadeBtn")) $("arcadeBtn").onclick = startArcade;
       if ($("arcadeExitBtn")) $("arcadeExitBtn").onclick = exitArcade;
+      setupMobileQuizOrder();
       updateArcadeStats();
+    }
+
+    function setupMobileQuizOrder() {
+      const mainPanel = document.querySelector(".layout > .panel:not(.mobile-after-quiz)");
+      const mobilePanel = $("mobileAfterQuiz");
+      const quizCard = document.querySelector(".quiz-card");
+      const statsGroup = $("statsGroup") || $("score")?.closest(".group");
+      const arcadeGroup = $("arcadeStats");
+      if (!mainPanel || !mobilePanel || !quizCard || !statsGroup) return;
+
+      if (!setupMobileQuizOrder.resizeBound) {
+        setupMobileQuizOrder.resizeBound = true;
+        window.addEventListener("resize", () => setupMobileQuizOrder(), { passive: true });
+        window.addEventListener("orientationchange", () => setTimeout(setupMobileQuizOrder, 80), { passive: true });
+      }
+
+      const isMobile = window.matchMedia("(max-width: 700px)").matches;
+      if (isMobile) {
+        if (statsGroup.parentElement !== mobilePanel) mobilePanel.appendChild(statsGroup);
+        if (arcadeGroup && arcadeGroup.parentElement !== mobilePanel) mobilePanel.appendChild(arcadeGroup);
+      } else {
+        const blurGroup = $("maskOn")?.closest(".group");
+        if (statsGroup.parentElement !== mainPanel) {
+          if (blurGroup?.nextSibling) mainPanel.insertBefore(statsGroup, blurGroup.nextSibling);
+          else mainPanel.appendChild(statsGroup);
+        }
+        if (arcadeGroup && arcadeGroup.parentElement !== mainPanel) {
+          statsGroup.insertAdjacentElement("afterend", arcadeGroup);
+        }
+      }
     }
 
     function updateArcadeStats() {
