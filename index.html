@@ -28239,7 +28239,19 @@
         const snap = await _db.collection('leaderboard')
           .where('key','==',key).orderBy('score','desc').limit(15).get();
         return snap.docs.map(d => d.data());
-      } catch(e) { return []; }
+      } catch(e) {
+        console.warn('Leaderboard lekérdezési hiba (valószínűleg hiányzó Firestore index):', e);
+        // Index nélküli fallback: lekérés rendezés nélkül, kliens oldalon rendezzük
+        try {
+          const snap2 = await _db.collection('leaderboard')
+            .where('key','==',key).limit(15).get();
+          return snap2.docs.map(d => d.data())
+            .sort((a,b) => (b.score||0) - (a.score||0));
+        } catch(e2) {
+          console.error('Leaderboard fallback is meghiúsult:', e2);
+          return [];
+        }
+      }
     }
 
     // ── Arcade mode: 20/30 rounds ──
@@ -28263,13 +28275,74 @@
     };
 
     finishArcade = function(showMessage) {
+      // Capture arcade state BEFORE _origFA clears/resets anything
+      const _snapScore    = state.arcade.score || 0;
+      const _snapCorrect  = state.arcade.correct || 0;
+      const _snapStreak   = state.arcade.bestStreak || 0;
+      const _snapTotal    = state.arcade.total || 20;
+      const _snapDiff     = canonicalDifficulty(state.arcade.difficulty || 'easy');
+      const _snapLog      = (state.arcade.questionLog || []).slice();
+      const _snapUid      = currentUser ? currentUser.uid : null;
+
       _origFA(showMessage);
-      saveArcadeAttempt().then(() => refreshStatsPanel());
-      // updateStats re-renders the stat block back to freeplay
+
+      // Save with captured state (not affected by _origFA resets)
+      if (_snapUid && _db) {
+        (async () => {
+          if (_pendingSave) return;
+          _pendingSave = true;
+          try {
+            const key = _snapDiff + _snapTotal;
+            const attempt = {
+              date: new Date().toISOString(),
+              ts: firebase.firestore.FieldValue.serverTimestamp(),
+              score: _snapScore, correct: _snapCorrect,
+              bestStreak: _snapStreak, questions: _snapTotal,
+              difficulty: _snapDiff, log: _snapLog
+            };
+            // Save attempt history
+            const attRef = _db.collection('users').doc(_snapUid).collection('attempts').doc(key);
+            const attSnap = await attRef.get();
+            let history = attSnap.exists ? (attSnap.data().history || []) : [];
+            history.unshift(attempt);
+            if (history.length > 5) history.length = 5;
+            await attRef.set({ history, key });
+            // Save best
+            const sRef = _db.collection('users').doc(_snapUid).collection('stats').doc('arcade');
+            const sSnap = await sRef.get();
+            const sData = sSnap.exists ? sSnap.data() : {};
+            const prev = (sData[key] || {}).best;
+            const isBetter = !prev || _snapScore > prev.score
+              || (_snapScore === prev.score && _snapCorrect > prev.correct)
+              || (_snapScore === prev.score && _snapCorrect === prev.correct && _snapStreak > prev.bestStreak);
+            await sRef.set({ ...sData, [key]: {
+              best: isBetter ? attempt : prev,
+              lastScore: _snapScore,
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }}, { merge: true });
+            // Save leaderboard
+            const lbRef = _db.collection('leaderboard').doc(_snapUid + '_' + key);
+            const prevLb = await lbRef.get();
+            if (!prevLb.exists || _snapScore > (prevLb.data().score || 0)) {
+              await lbRef.set({
+                uid: _snapUid, key, score: _snapScore, correct: _snapCorrect,
+                bestStreak: _snapStreak, questions: _snapTotal,
+                difficulty: _snapDiff, displayName: getDisplayName(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+              });
+            }
+            console.log('✓ Arcade eredmény mentve:', key, _snapScore, 'pont');
+          } catch(e) {
+            console.error('✗ Mentési hiba:', e);
+          }
+          _pendingSave = false;
+          refreshStatsPanel();
+        })();
+      }
+
       updateStats();
-      // sync selects
       const dm = document.getElementById('difficultyMobile');
-      const val = canonicalDifficulty(document.getElementById('difficulty').value || state.arcade.lastDifficulty || 'easy');
+      const val = canonicalDifficulty(document.getElementById('difficulty').value || _snapDiff);
       if (dm) dm.value = val;
     };
 
