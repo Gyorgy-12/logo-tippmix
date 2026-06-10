@@ -27137,9 +27137,9 @@
       state.arcade.lastDifficulty = state.arcade.difficulty;
       updateArcadeStats();
       if (state.arcade.done >= state.arcade.total) {
-        state.autoNextTimer = setTimeout(showArcadeEndOverlay, autoAdvance ? 5200 : 300);
+        state.autoNextTimer = setTimeout(showArcadeEndOverlay, autoAdvance ? 4200 : 300);
       } else if (autoAdvance) {
-        state.autoNextTimer = setTimeout(nextQuestion, 5200);
+        state.autoNextTimer = setTimeout(nextQuestion, 4200);
       }
     }
 
@@ -27171,7 +27171,7 @@
         state.locked = true;
         showReveal(false);
         if (state.arcade.active) completeArcadeQuestion(earned, true);
-        else state.autoNextTimer = setTimeout(nextQuestion, 5200);
+        else state.autoNextTimer = setTimeout(nextQuestion, 4200);
       } else {
         state.attempts++;
         const left = 3 - state.attempts;
@@ -27256,6 +27256,10 @@
         state.blurLogo = true;
         $("maskOn").classList.add("active");
         $("maskOff").classList.remove("active");
+        const monM = document.getElementById('maskOnMob');
+        const mofM = document.getElementById('maskOffMob');
+        if (monM) { monM.classList.add('active'); }
+        if (mofM) { mofM.classList.remove('active'); }
       }
       $("answer").value = "";
       $("message").textContent = state.arcade.active ? `Arcade: ${difficultyLabel(difficulty)} · ${state.arcade.done + 1}/${state.arcade.total}` : resetNotice;
@@ -27481,9 +27485,9 @@
       updateArcadeStats();
       if (state.arcade.done >= state.arcade.total) {
         storeArcadeResult();
-        state.autoNextTimer = setTimeout(showArcadeEndOverlay, autoAdvance ? 5200 : 300);
+        state.autoNextTimer = setTimeout(showArcadeEndOverlay, autoAdvance ? 4200 : 300);
       } else if (autoAdvance) {
-        state.autoNextTimer = setTimeout(nextQuestion, 5200);
+        state.autoNextTimer = setTimeout(nextQuestion, 4200);
       }
     }
 
@@ -27666,7 +27670,7 @@
           $("message").className = "message good";
           state.locked = true;
           showReveal(false);
-          state.autoNextTimer = setTimeout(nextQuestion, 5200);
+          state.autoNextTimer = setTimeout(nextQuestion, 4200);
         }
       } else {
         state.attempts++;
@@ -28298,7 +28302,6 @@
             const key = _snapDiff + _snapTotal;
             const attempt = {
               date: new Date().toISOString(),
-              ts: firebase.firestore.FieldValue.serverTimestamp(),
               score: _snapScore, correct: _snapCorrect,
               bestStreak: _snapStreak, questions: _snapTotal,
               difficulty: _snapDiff, log: _snapLog
