@@ -28062,6 +28062,7 @@
         _fbReady = true;
         renderAuthUI();
         refreshStatsPanel();
+        refreshLeaderboard();
       });
     }
 
@@ -28144,7 +28145,9 @@
         const name = getDisplayName();
         el.innerHTML = `
           <div class="auth-user">
-            <div class="auth-avatar">${name[0].toUpperCase()}</div>
+            ${currentUser.photoURL
+            ? `<img src="${currentUser.photoURL}" alt="${name}" class="auth-avatar-img" />`
+            : `<div class="auth-avatar">${name[0].toUpperCase()}</div>`}
             <div class="auth-info">
               <div class="auth-name">${name}</div>
               <div class="auth-provider">${currentUser.provider==='google.com'?'🔵 Google':'👤 Helyi'}</div>
@@ -28604,33 +28607,79 @@
     // ── Leaderboard (right panel, desktop only) ──
     let _lbKey = 'easy20';
 
+    let _lbLoading = false;
     async function refreshLeaderboard() {
       const box = document.getElementById('lbPanel');
       if (!box) return;
-      const rows = await loadLeaderboard(_lbKey);
-      const me = currentUser ? currentUser.uid : null;
+      if (_lbLoading) return;
+      _lbLoading = true;
+
+      // Show loading spinner while keeping controls
+      const existingSelect = box.querySelector('#lbKeySelect');
+      const currentVal = existingSelect ? existingSelect.value : _lbKey;
+      _lbKey = currentVal;
+
       box.innerHTML = `
         <div class="lb-header">
           <span class="label" style="font-size:11px;">🏅 Ranglista</span>
-          <select id="lbKeySelect" onchange="_lbKey=this.value;refreshLeaderboard()"
-            style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.14);border-radius:9px;color:#f5f7ff;font-size:11px;padding:4px 8px;font-family:inherit;">
-            ${['easy20','medium20','premium20','easy30','medium30','premium30'].map(k=>`
-              <option value="${k}" ${k===_lbKey?'selected':''}>${
-                k.replace('easy','🟢 Könnyű').replace('medium','🟡 Közepes').replace('premium','🔴 Nehéz')
-                 .replace('20',' – 20').replace('30',' – 30')
-              }</option>`).join('')}
-          </select>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <select id="lbKeySelect" onchange="_lbKey=this.value;refreshLeaderboard()"
+              style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.14);border-radius:9px;color:#f5f7ff;font-size:11px;padding:4px 8px;font-family:inherit;">
+              ${['easy20','medium20','premium20','easy30','medium30','premium30'].map(k=>`
+                <option value="${k}" ${k===_lbKey?'selected':''}>${
+                  k.replace('easy','🟢 Könnyű').replace('medium','🟡 Közepes').replace('premium','🔴 Nehéz')
+                   .replace('20',' – 20').replace('30',' – 30')
+                }</option>`).join('')}
+            </select>
+            <button id="lbRefreshBtn" onclick="refreshLeaderboard()" title="Frissítés"
+              style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#aeb7d7;font-size:13px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;transition:background .15s;">
+              ↻
+            </button>
+          </div>
         </div>
-        ${rows.length === 0 ? '<div class="lb-empty">Még nincs eredmény ebben a kategóriában</div>' : `
-        <div class="lb-table">
-          ${rows.map((r,i) => `
-            <div class="lb-row ${r.uid===me?'lb-me':''}">
-              <div class="lb-rank">${i+1}</div>
-              <div class="lb-name">${(r.displayName||'Névtelen').slice(0,22)}</div>
-              <div class="lb-score">${r.score}</div>
-              <div class="lb-detail">${r.correct}/${r.questions||20} · 🔥${r.bestStreak}</div>
-            </div>`).join('')}
-        </div>`}`;
+        <div class="lb-loading" style="text-align:center;padding:14px 0;color:#aeb7d7;font-size:12px;">Betöltés...</div>`;
+
+      try {
+        const [rows, myStats] = await Promise.all([
+          loadLeaderboard(_lbKey),
+          currentUser && _db ? loadMyStats() : Promise.resolve(null)
+        ]);
+        const me = currentUser ? currentUser.uid : null;
+        const myBest = myStats ? (myStats.stats[_lbKey] || {}).best : null;
+        const myInLb = rows.some(r => r.uid === me);
+
+        const tableHtml = rows.length === 0
+          ? '<div class="lb-empty">Még nincs eredmény ebben a kategóriában</div>'
+          : `<div class="lb-table">
+              ${rows.map((r,i) => `
+                <div class="lb-row ${r.uid===me?'lb-me':''}">
+                  <div class="lb-rank">${i+1}</div>
+                  <div class="lb-name">${(r.displayName||'Névtelen').slice(0,22)}</div>
+                  <div class="lb-score">${r.score}</div>
+                  <div class="lb-detail">${r.correct}/${r.questions||20} · 🔥${r.bestStreak}</div>
+                </div>`).join('')}
+            </div>`;
+
+        // If logged in but not in top 15, show own best below
+        const myRowHtml = (me && !myInLb && myBest) ? `
+          <div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.07);">
+            <div class="lb-row lb-me" style="opacity:.8;">
+              <div class="lb-rank">–</div>
+              <div class="lb-name">${getDisplayName().slice(0,22)} (te)</div>
+              <div class="lb-score">${myBest.score}</div>
+              <div class="lb-detail">${myBest.correct}/${myBest.questions||20} · 🔥${myBest.bestStreak}</div>
+            </div>
+          </div>` : '';
+
+        const lbContent = box.querySelector('.lb-loading');
+        if (lbContent) lbContent.outerHTML = tableHtml + myRowHtml;
+      } catch(e) {
+        const lbContent = box.querySelector('.lb-loading');
+        if (lbContent) lbContent.textContent = 'Hiba a betöltésnél.';
+        console.error(e);
+      }
+
+      _lbLoading = false;
     }
 
     // ── DOM injection + CSS ──
@@ -28675,9 +28724,19 @@
         ::-webkit-scrollbar{width:5px} ::-webkit-scrollbar-track{background:rgba(0,0,0,.15);border-radius:3px}
         ::-webkit-scrollbar-thumb{background:rgba(124,92,255,.4);border-radius:3px}
 
+        /* Fix: input text descenders (g, j, y) not clipped */
+        #answer {
+          line-height: 1.5;
+          padding-top: 11px;
+          padding-bottom: 11px;
+          height: auto;
+          overflow: visible;
+        }
+
         /* Auth */
         .auth-user{display:flex;align-items:center;gap:9px;}
         .auth-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#28d7ff);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0;}
+        .auth-avatar-img{width:34px;height:34px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid rgba(255,255,255,.2);}
         .auth-info{flex:1;min-width:0;}
         .auth-name{font-weight:800;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .auth-provider{font-size:11px;color:var(--muted);margin-top:1px;}
@@ -28882,7 +28941,9 @@
           const name = getDisplayName();
           ha.innerHTML = `
             <div class="auth-user">
-              <div class="auth-avatar">${name[0].toUpperCase()}</div>
+              ${currentUser.photoURL
+                ? `<img src="${currentUser.photoURL}" alt="${name}" class="auth-avatar-img" />`
+                : `<div class="auth-avatar">${name[0].toUpperCase()}</div>`}
               <div class="auth-info">
                 <div class="auth-name">${name}</div>
                 <div class="auth-provider">${currentUser.provider==='google.com'?'🔵 Google':'👤 Helyi'}</div>
@@ -28954,13 +29015,17 @@
       const hl = document.getElementById('hamLbContent');
       if (hl) {
         hl.innerHTML = `
-          <select id="hamLbKeySelect" onchange="_lbKey=this.value;_renderHamLb()"
-            style="width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.14);border-radius:10px;color:#f5f7ff;font-size:12px;padding:8px 10px;font-family:inherit;margin-bottom:8px;">
-            ${['easy20','medium20','premium20','easy30','medium30','premium30'].map(k=>`
-              <option value="${k}" ${k===_lbKey?'selected':''}>${
-                k.replace('easy','🟢 Könnyű').replace('medium','🟡 Közepes').replace('premium','🔴 Nehéz').replace('20',' – 20').replace('30',' – 30')
-              }</option>`).join('')}
-          </select>
+          <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">
+            <select id="hamLbKeySelect" onchange="_lbKey=this.value;_renderHamLb()"
+              style="flex:1;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.14);border-radius:10px;color:#f5f7ff;font-size:12px;padding:8px 10px;font-family:inherit;">
+              ${['easy20','medium20','premium20','easy30','medium30','premium30'].map(k=>`
+                <option value="${k}" ${k===_lbKey?'selected':''}>${
+                  k.replace('easy','🟢 Könnyű').replace('medium','🟡 Közepes').replace('premium','🔴 Nehéz').replace('20',' – 20').replace('30',' – 30')
+                }</option>`).join('')}
+            </select>
+            <button onclick="_renderHamLb()" title="Frissítés"
+              style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#aeb7d7;font-size:14px;width:34px;height:34px;cursor:pointer;flex-shrink:0;font-family:inherit;">↻</button>
+          </div>
           <div id="hamLbRows"><div class="no-record">Betöltés...</div></div>`;
         _renderHamLb();
       }
@@ -28970,16 +29035,36 @@
       const el = document.getElementById('hamLbRows');
       if (!el) return;
       el.innerHTML = '<div class="no-record">Betöltés...</div>';
-      const rows = await loadLeaderboard(_lbKey);
-      const me = currentUser ? currentUser.uid : null;
-      if (!rows.length) { el.innerHTML = '<div class="no-record">Még nincs eredmény</div>'; return; }
-      el.innerHTML = `<div class="lb-table">${rows.map((r,i)=>`
-        <div class="lb-row ${r.uid===me?'lb-me':''}">
-          <div class="lb-rank">${i+1}</div>
-          <div class="lb-name">${(r.displayName||'Névtelen').slice(0,20)}</div>
-          <div class="lb-score">${r.score}</div>
-          <div class="lb-detail">${r.correct}/${r.questions||20} · 🔥${r.bestStreak}</div>
-        </div>`).join('')}</div>`;
+      try {
+        const [rows, myStats] = await Promise.all([
+          loadLeaderboard(_lbKey),
+          currentUser && _db ? loadMyStats() : Promise.resolve(null)
+        ]);
+        const me = currentUser ? currentUser.uid : null;
+        const myBest = myStats ? (myStats.stats[_lbKey] || {}).best : null;
+        const myInLb = rows.some(r => r.uid === me);
+        if (!rows.length && !myBest) { el.innerHTML = '<div class="no-record">Még nincs eredmény</div>'; return; }
+        const tableHtml = rows.length
+          ? `<div class="lb-table">${rows.map((r,i)=>`
+              <div class="lb-row ${r.uid===me?'lb-me':''}">
+                <div class="lb-rank">${i+1}</div>
+                <div class="lb-name">${(r.displayName||'Névtelen').slice(0,20)}</div>
+                <div class="lb-score">${r.score}</div>
+                <div class="lb-detail">${r.correct}/${r.questions||20} · 🔥${r.bestStreak}</div>
+              </div>`).join('')}</div>`
+          : '<div class="no-record">Még nincs eredmény</div>';
+        const myRowHtml = (me && !myInLb && myBest)
+          ? `<div style="margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.07);">
+              <div class="lb-row lb-me" style="opacity:.8;">
+                <div class="lb-rank">–</div>
+                <div class="lb-name">${getDisplayName().slice(0,20)} (te)</div>
+                <div class="lb-score">${myBest.score}</div>
+                <div class="lb-detail">${myBest.correct}/${myBest.questions||20} · 🔥${myBest.bestStreak}</div>
+              </div></div>` : '';
+        el.innerHTML = tableHtml + myRowHtml;
+      } catch(e) {
+        el.innerHTML = '<div class="no-record">Hiba a betöltésnél</div>';
+      }
     }
     window._renderHamLb = _renderHamLb;
 
