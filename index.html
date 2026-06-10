@@ -1324,7 +1324,258 @@
         min-height: 22px;
       }
     }
-  </style>
+
+    /* Polish text placement inside compact cards and controls. */
+    button,
+    .mode-btn,
+    .small-btn,
+    .primary,
+    .ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1.08;
+      white-space: normal;
+    }
+
+    select,
+    input {
+      line-height: 1.2;
+    }
+
+    .stat,
+    .arcade-summary-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(3px, .35vw, 6px);
+    }
+
+    .stat b {
+      margin-bottom: 0;
+    }
+
+    .arcade-summary-card {
+      align-items: flex-start;
+    }
+
+    .badge {
+      line-height: 1.1;
+      align-items: center;
+    }
+
+    .revealed {
+      display: none;
+      align-items: center;
+    }
+
+    .revealed.show {
+      display: block;
+    }
+
+    .input-row .primary,
+    .input-row .ghost {
+      min-width: 0;
+    }
+  
+    /* ── Hamburger button ── */
+    .ham-btn {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      background: rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.14);
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .ham-btn span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: #f5f7ff;
+      border-radius: 2px;
+      transition: all .2s;
+    }
+    @media (max-width: 900px) {
+      .ham-btn { display: flex; }
+      /* Hide desktop panel on mobile */
+      .layout > .panel:not(.mobile-after-quiz) { display: none !important; }
+      /* Show mobile diff select */
+      #mobileNehSelect { display: block !important; }
+    }
+
+    /* Mobile controls strip */
+    .mobile-controls {
+      display: none;
+      gap: 8px;
+      flex-direction: column;
+    }
+    @media (max-width: 900px) {
+      .mobile-controls { display: flex; }
+    }
+    .mobile-blur-row {
+      display: flex;
+      gap: 8px;
+    }
+    .mobile-blur-row .small-btn {
+      flex: 1;
+    }
+    .mobile-stats-row {
+      display: flex;
+      gap: 8px;
+    }
+    .mob-stat {
+      flex: 1;
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 13px;
+      padding: 9px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .mob-stat b {
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+    .mob-stat span {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    /* ── Hamburger drawer ── */
+    .ham-drawer {
+      position: fixed;
+      top: 0; right: 0;
+      width: min(360px, 92vw);
+      height: 100dvh;
+      background: rgba(10,13,28,.97);
+      border-left: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 1000;
+      transform: translateX(100%);
+      transition: transform .28s cubic-bezier(.4,0,.2,1);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .ham-drawer.open { transform: translateX(0); }
+    .ham-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .28s;
+    }
+    .ham-overlay.open { opacity: 1; pointer-events: all; }
+    .ham-drawer-inner {
+      padding: 20px 18px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .ham-close {
+      align-self: flex-end;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      color: #f5f7ff;
+      font-size: 16px;
+      width: 36px; height: 36px;
+      cursor: pointer;
+      margin-bottom: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: inherit;
+    }
+    .ham-section {
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .ham-section:last-child { border-bottom: none; }
+    .ham-section-title {
+      font-size: 10.5px;
+      font-weight: 900;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(174,183,215,.6);
+      margin-bottom: 10px;
+    }
+    .ham-arcade-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+    .ham-arcade-btn {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 13px;
+      padding: 12px 10px;
+      color: #f5f7ff;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: center;
+      line-height: 1.3;
+      transition: background .15s, border-color .15s;
+    }
+    .ham-arcade-btn:hover, .ham-arcade-btn:active {
+      background: rgba(124,92,255,.25);
+      border-color: rgba(124,92,255,.4);
+    }
+    .ham-arcade-btn .btn-rounds {
+      font-size: 10px;
+      color: var(--muted);
+      display: block;
+      margin-top: 2px;
+    }
+    /* Mobile: hide desktop arcade stats panel (handled by mobileStatGrid) */
+    @media (max-width: 900px) {
+      #arcadeStats { display: none !important; }
+      .mob-exit-btn {
+        background: rgba(255,107,107,.12);
+        border: 1px solid rgba(255,107,107,.28);
+        border-radius: 13px;
+        color: #ff6b6b;
+        font-weight: 900;
+        font-size: 13px;
+        padding: 11px;
+        cursor: pointer;
+        font-family: inherit;
+        width: 100%;
+        text-align: center;
+      }
+    }
+    .ham-lb-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 12px;
+      padding: 11px;
+      color: var(--accent2);
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+</style>
 </head>
 <body>
   <main class="app">
@@ -1336,8 +1587,46 @@
           Nincs input alatti segítség, nincs liga-súgás: csak te, a homályos címer, és a koefficiens-mocsár.
         </div>
       </div>
-      <div class="pill">V31 strict - koefficiens + hazai tabella poolok</div>
+      <div class="pill">V34 · Firebase · hamburger · leaderboard</div>
     </header>
+
+    <!-- Hamburger drawer (mobile) -->
+    <div id="hamDrawer" class="ham-drawer">
+      <div class="ham-drawer-inner">
+        <button class="ham-close" onclick="closeDrawer()" aria-label="Bezárás">✕</button>
+
+        <div class="ham-section">
+          <div class="ham-section-title">Üzemmód</div>
+          <div class="toggle">
+            <button class="mode-btn active" id="logoModeHam">Logótipp</button>
+            <button class="mode-btn" id="playerModeHam">Játékos</button>
+          </div>
+        </div>
+
+        <div class="ham-section">
+          <div class="ham-section-title">Arcade indítása</div>
+          <div class="ham-arcade-grid" id="hamArcadeGrid">
+            <!-- filled by JS -->
+          </div>
+        </div>
+
+        <div class="ham-section" id="hamStatsSection">
+          <div class="ham-section-title">Statisztikáim</div>
+          <div id="hamStatsContent"><div class="no-record">Betöltés...</div></div>
+        </div>
+
+        <div class="ham-section">
+          <div class="ham-section-title">Ranglista</div>
+          <div id="hamLbContent"><div class="no-record">Betöltés...</div></div>
+        </div>
+
+        <div class="ham-section">
+          <div class="ham-section-title">Fiók</div>
+          <div id="hamAuthArea"></div>
+        </div>
+      </div>
+    </div>
+    <div id="hamOverlay" class="ham-overlay" onclick="closeDrawer()"></div>
 
     <section class="layout">
       <aside class="panel">
@@ -1356,9 +1645,6 @@
             <option value="medium">Közepes - 5-15 alsó + 16-30 felső</option>
             <option value="premium">Nehéz - 16-30 alsó + 31+ kupa</option>
           </select>
-          <div class="hint">
-            Konnyu: Top 5 liga teljes mezonye, plusz az 5-15. koefficiens bajnoksagok hazai tabella szerinti elso fele. Kozepes: 5-15. bajnoksagok also fele es 16-30. bajnoksagok elso fele. Nehez: 16-30. bajnoksagok also fele, plusz 31+ koefficiens bajnoksagok kupainduloi / elmezonye.
-          </div>
         </div>
 
         <div class="group">
@@ -1367,19 +1653,17 @@
             <button class="small-btn active" id="maskOn">Blur be</button>
             <button class="small-btn" id="maskOff">Blur ki</button>
           </div>
-          <div class="hint">
-            Az egész logót elhomályosítja annyira, hogy a felirat ne legyen olvasható, de a forma még felismerhető maradjon.
-          </div>
         </div>
 
         <div class="group" id="statsGroup">
-          <span class="label">Statisztika</span>
-          <div class="stats">
+          <span class="label" id="statsGroupLabel">Statisztika</span>
+          <div class="stats" id="statsGrid">
             <div class="stat"><b id="score">0</b><span>pont</span></div>
             <div class="stat"><b id="streak">0</b><span>sorozat</span></div>
             <div class="stat"><b id="correct">0</b><span>jó</span></div>
             <div class="stat"><b id="total">0</b><span>összes</span></div>
           </div>
+          <button id="arcadeExitDesktop" style="display:none;margin-top:10px;width:100%;background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.28);border-radius:13px;color:#ff6b6b;font-weight:900;font-size:13px;padding:10px;cursor:pointer;font-family:inherit;" onclick="exitArcade()">✕ Kilépés az arcade módból</button>
         </div>
 
       </aside>
@@ -1387,12 +1671,34 @@
       <section class="quiz-card">
         <div class="topline">
           <div class="badge">Mód: <strong id="modeBadge">Logótipp</strong></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div id="mobileNehSelect" class="mobile-neh-select" style="display:none;">
+              <select id="difficultyMobile" onchange="document.getElementById('difficulty').value=this.value;document.getElementById('difficulty').dispatchEvent(new Event('change'))"
+                style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.18);border-radius:10px;color:#f5f7ff;font-size:12px;padding:6px 28px 6px 9px;font-family:inherit;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2210%22 height=%226%22 viewBox=%220 0 10 6%22%3E%3Cpath fill=%22rgba(174,183,215,.6)%22 d=%22M5 6L0 0h10z%22/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 8px center;">
+                <option value="easy">Könnyű</option>
+                <option value="medium">Közepes</option>
+                <option value="premium">Nehéz</option>
+              </select>
+            </div>
+            <button class="ham-btn" id="hamBtn" onclick="openDrawer()" aria-label="Menü">
+              <span></span><span></span><span></span>
+            </button>
+          </div>
         </div>
 
         <div class="media-wrap">
           <div class="image-box logo" id="imageBox">
             <div class="fallback" id="fallback">?</div>
           </div>
+        </div>
+
+        <!-- Mobile-only controls strip below image -->
+        <div class="mobile-controls" id="mobileControls">
+          <div class="mobile-blur-row">
+            <button class="small-btn active" id="maskOnMob">Blur be</button>
+            <button class="small-btn" id="maskOffMob">Blur ki</button>
+          </div>
+
         </div>
 
         <div class="answer-area">
@@ -25084,16 +25390,6 @@
       });
 
       const difficultyGroup = $("difficulty").closest(".group");
-      if (difficultyGroup && !$("arcadeBtn")) {
-        const btn = document.createElement("button");
-        btn.id = "arcadeBtn";
-        btn.className = "primary";
-        btn.type = "button";
-        btn.style.marginTop = "10px";
-        btn.style.width = "100%";
-        btn.textContent = "Arcade üzemmód indítása";
-        difficultyGroup.appendChild(btn);
-      }
       if (difficultyGroup && !$("arcadeExitBtn")) {
         const exit = document.createElement("button");
         exit.id = "arcadeExitBtn";
@@ -25101,6 +25397,8 @@
         exit.type = "button";
         exit.textContent = "Kilépés az Arcade módból";
         exit.style.display = "none";
+        exit.style.marginTop = "8px";
+        exit.style.width = "100%";
         difficultyGroup.appendChild(exit);
       }
 
@@ -25109,11 +25407,8 @@
         const arcade = document.createElement("div");
         arcade.className = "group";
         arcade.id = "arcadeStats";
-        arcade.style.display = "none";
-        arcade.innerHTML = '<span class="label">Arcade mód</span><div class="stats"><div class="stat"><b id="arcadeLevel">-</b><span>szint</span></div><div class="stat"><b id="arcadeScore">0</b><span>pont</span></div><div class="stat"><b id="arcadeProgress">0/20</b><span>logó</span></div><div class="stat"><b id="arcadeState">aktív</b><span>állapot</span></div></div>';
         statsGroup.insertAdjacentElement("afterend", arcade);
       }
-      if ($("arcadeBtn")) $("arcadeBtn").onclick = startArcade;
       if ($("arcadeExitBtn")) $("arcadeExitBtn").onclick = exitArcade;
       setupMobileQuizOrder();
       updateArcadeStats();
@@ -25435,12 +25730,12 @@
       overlay.innerHTML = '<div class="arcade-end-box"><div class="arcade-end-title">Arcade vége</div><div class="arcade-end-sub" id="arcadeEndText"></div><div class="arcade-end-actions"><button type="button" id="arcadeEndExit">Kilépés</button><button type="button" id="arcadeEndRestart">Újrakezdés</button><button type="button" id="arcadeEndOther">Másik szint</button></div></div>';
       media.appendChild(overlay);
       $("arcadeEndExit").onclick = () => finishArcade(false);
-      $("arcadeEndRestart").onclick = () => startArcade(state.arcade.lastDifficulty);
+      $("arcadeEndRestart").onclick = () => startArcadeNew(state.arcade.lastDifficulty, state.arcade.total || 20);
       $("arcadeEndOther").onclick = () => {
         const order = ["easy", "medium", "premium"];
         const next = order[(order.indexOf(state.arcade.lastDifficulty) + 1 + order.length) % order.length];
-        $("difficulty").value = next;
-        startArcade(next);
+        syncDifficultySelect(next);
+        startArcadeNew(next, state.arcade.total || 20);
       };
     }
 
@@ -25742,6 +26037,7 @@
       state.lastEarned = 0;
       $("difficulty").value = selected;
       $("difficulty").disabled = true;
+      const _dm2 = document.getElementById('difficultyMobile'); if (_dm2) _dm2.value = selected;
       $("logoMode").classList.add("active");
       $("playerMode").classList.remove("active");
       $("message").textContent = `Arcade mód: ${difficultyLabel(selected)} szint, 20 logó.`;
@@ -25906,6 +26202,8 @@
       if (select && Array.from(select.options).some(option => option.value === difficulty)) {
         select.value = difficulty;
       }
+      const dm = document.getElementById('difficultyMobile');
+      if (dm) dm.value = difficulty;
       return difficulty;
     }
 
@@ -27189,12 +27487,126 @@
       }
     }
 
+    const countryPointBonus = {
+      ENG: 0, ESP: 0, GER: 0, ITA: 0, FRA: 1,
+      NED: 3, POR: 4, BEL: 4, TUR: 5, CZE: 6, GRE: 6, SCO: 6, DEN: 7, AUT: 7, NOR: 8, SUI: 8,
+      SWE: 9, POL: 9, CRO: 10, ROU: 10, SRB: 10, CYP: 11, HUN: 11, ISR: 11, UKR: 11,
+      BUL: 12, SVK: 12, SVN: 13, KAZ: 13, AZE: 13, MDA: 14, BIH: 14, FIN: 15, IRL: 15,
+      ISL: 16, LUX: 17, LTU: 18, LVA: 18, FRO: 19, EST: 19, GEO: 19, ALB: 20, ARM: 20,
+      MKD: 20, MNE: 21, KVX: 22, MLT: 23, GIB: 24, AND: 25, SMR: 26, NIR: 17, WAL: 17, BLR: 16
+    };
+
+    const globalLowPointTeams = new Set([
+      "barcelona", "real madrid", "bayern munchen", "bayern munich", "manchester city", "manchester united",
+      "liverpool", "arsenal", "chelsea", "paris saint germain", "psg", "juventus", "inter", "milan", "ac milan"
+    ]);
+
+    const eliteEuropeanTeams = new Set([
+      "tottenham", "tottenham hotspur", "napoli", "roma", "atletico madrid", "borussia dortmund", "bayer leverkusen",
+      "ajax", "psv eindhoven", "feyenoord", "benfica", "porto", "sporting cp", "celtic", "rangers",
+      "galatasaray", "fenerbahce", "besiktas", "olympiacos", "paok", "panathinaikos", "dinamo zagreb",
+      "crvena zvezda", "partizan beograd", "ferencvaros", "sparta prague", "slavia prague",
+      "shakhtar donetsk", "dynamo kyiv", "fc copenhagen", "salzburg", "sturm graz", "club brugge", "anderlecht"
+    ]);
+
+    const familiarEuropeanTeams = new Set([
+      "basel", "young boys", "malmo ff", "rosenborg",
+      "anderlecht", "club brugge", "genk", "gent", "standard liege", "az alkmaar", "twente", "utrecht",
+      "braga", "vitoria guimaraes", "aek athens", "aris thessaloniki", "rapid wien", "austria wien",
+      "salzburg", "sturm graz", "lask", "bodo glimt", "molde", "viking", "brondby", "midtjylland",
+      "hearts", "hibernian", "aberdeen", "viktoria plzen", "banik ostrava", "jablonec", "slovan liberec",
+      "legia warszawa", "lech poznan", "rakow czestochowa", "jagiellonia bialystok", "ludogorets razgrad",
+      "levski sofia", "cska sofia", "cfr cluj", "fcsb", "rapid bucuresti", "universitatea craiova",
+      "slovan bratislava", "spartak trnava", "zilina", "hajduk split", "rijeka", "maribor", "olimpija ljubljana"
+    ]);
+
+    function hasKnownName(set, name, aliases) {
+      return set.has(name) || aliases.some(alias => set.has(alias));
+    }
+
+    function recognitionPointAdjustment(name, aliases) {
+      if (hasKnownName(globalLowPointTeams, name, aliases)) return -14;
+      if (hasKnownName(eliteEuropeanTeams, name, aliases)) return -6;
+      if (hasKnownName(familiarEuropeanTeams, name, aliases)) return -5;
+      return 0;
+    }
+
+    const teamPointAdjustments = {
+      "servette": -7,
+      "servette fc": -7,
+      "lausanne": -5,
+      "lausanne sport": -5,
+      "fc lausanne sport": -5,
+      "luzern": -5,
+      "fc luzern": -5,
+      "fc zurich": -5,
+      "zurich": -5,
+      "grasshopper": -3,
+      "grasshoppers": -3,
+      "fc winterthur": 4,
+      "winterthur": 4
+    };
+
+    function domesticPlacement(item) {
+      const match = String(item.note || "").match(/\((\d+)\/(\d+)\.\s*hely\)/i);
+      if (!match) return null;
+      const place = Number(match[1]);
+      const total = Number(match[2]);
+      if (!Number.isFinite(place) || !Number.isFinite(total) || place < 1 || total < 2) return null;
+      return { place, total, ratio: place / total };
+    }
+
+    function domesticPointAdjustment(item, note, country) {
+      const placement = domesticPlacement(item);
+      if (!placement) {
+        if (note.includes("masodosztaly")) return countryPointBonus[country] <= 5 ? 5 : 3;
+        if (note.includes("elmult") || note.includes("közelmult") || note.includes("kozelmult")) return item.tier === "hard" ? 3 : 2;
+        return 0;
+      }
+
+      const { place, total, ratio } = placement;
+      if (place === 1) return -5;
+      if (place <= 3 || ratio <= .2) return -4;
+      if (ratio <= .5) return -2;
+      if (ratio <= .7) return 1;
+      if (place >= total - 1 || ratio >= .9) return 6;
+      return 4;
+    }
+
+    function teamPointWeight(item) {
+      if (state.mode !== "logo") {
+        return item.tier === "hard" ? 22 : item.tier === "medium" ? 15 : 10;
+      }
+      const name = normalize(item.name || "");
+      const aliases = (item.aliases || []).map(normalize);
+      const note = normalize(item.note || "");
+      const league = normalize(item.league || "");
+      const country = item.country || "";
+      let points = item.tier === "hard" ? 32 : item.tier === "medium" ? 22 : 14;
+
+      points += countryPointBonus[country] || 12;
+      points += recognitionPointAdjustment(name, aliases);
+      const directAdjustment = teamPointAdjustments[name];
+      const aliasAdjustment = aliases.map(alias => teamPointAdjustments[alias]).find(value => Number.isFinite(value));
+      points += Number.isFinite(directAdjustment) ? directAdjustment : (aliasAdjustment || 0);
+
+      if (note.includes("top 5 liga teljes")) points -= 4;
+      points += domesticPointAdjustment(item, note, country);
+      if (note.includes("31") || note.includes("kupaindulo") || note.includes("europai kupaindulo")) points += countryPointBonus[country] >= 16 ? 8 : 3;
+
+      if (league.includes("champions league") || league.includes("laliga") || league.includes("bundesliga") || league.includes("serie a") || league.includes("premier league") && ["ENG","ESP","GER","ITA","FRA"].includes(country)) points -= 2;
+      if (["MLT","GIB","AND","SMR","FRO","KVX","LTU","LVA","EST"].includes(country)) points += 5;
+
+      return Math.max(4, Math.min(72, Math.round(points)));
+    }
+
     function pointsForCorrectAnswer(item) {
-      const tierBase = item.tier === "hard" ? 22 : item.tier === "medium" ? 15 : 10;
+      const tierBase = teamPointWeight(item);
       const streak = state.arcade.active ? (state.arcade.streak || 0) : (state.streak || 0);
       const peeked = state.mode === "logo" && (state.peekedLogo || !state.blurLogo);
       const blurMultiplier = peeked ? .5 : 1;
-      const streakMultiplier = 1 + Math.min(10, Math.max(0, streak - 1)) * .15;
+      const streakDepth = Math.min(18, Math.max(0, streak - 1));
+      const streakMultiplier = 1 + streakDepth * .05;
       return Math.max(1, Math.round(tierBase * blurMultiplier * streakMultiplier));
     }
 
@@ -27592,6 +28004,912 @@
     nextQuestion();
     updateStats();
     updateArcadeStats();
-  </script>
+
+
+    // ============================================================
+    // V33 — Firebase backend + clean game logic overrides
+    // ============================================================
+
+    // ── 1. Load Firebase SDK asynchronously ──
+    (function() {
+      const sdks = [
+        'https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js',
+        'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js',
+        'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js'
+      ];
+      let n = 0;
+      sdks.forEach(src => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = () => { if (++n === sdks.length) initFirebase(); };
+        s.onerror = () => console.error('Failed to load', src);
+        document.head.appendChild(s);
+      });
+    })();
+
+    const FB_CONFIG = {
+      apiKey: "AIzaSyBkZwU1sCkjYGSjowUOEJu2keXBcPwGVJU",
+      authDomain: "logo-tippeles.firebaseapp.com",
+      projectId: "logo-tippeles",
+      storageBucket: "logo-tippeles.firebasestorage.app",
+      messagingSenderId: "439136498177",
+      appId: "1:439136498177:web:53ce69c73d558f04a44600"
+    };
+
+    let _db = null, _auth = null;
+    let currentUser = null;   // { uid, displayName, email, photoURL, provider }
+    let userProfile = null;
+    let _fbReady = false;
+
+    function initFirebase() {
+      if (!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+      _db   = firebase.firestore();
+      _auth = firebase.auth();
+      _auth.onAuthStateChanged(async fbUser => {
+        if (fbUser) {
+          currentUser = {
+            uid: fbUser.uid,
+            displayName: fbUser.displayName || '',
+            email: fbUser.email || '',
+            photoURL: fbUser.photoURL || '',
+            provider: fbUser.providerData[0]?.providerId || 'unknown'
+          };
+          userProfile = await loadOrCreateProfile(fbUser);
+        } else {
+          currentUser = null;
+          userProfile = null;
+        }
+        _fbReady = true;
+        renderAuthUI();
+        refreshStatsPanel();
+      });
+    }
+
+    async function loadOrCreateProfile(fbUser) {
+      const ref = _db.collection('users').doc(fbUser.uid);
+      const snap = await ref.get();
+      if (snap.exists) return snap.data();
+      const profile = {
+        uid: fbUser.uid,
+        displayName: fbUser.displayName || fbUser.email.split('@')[0] || 'Játékos',
+        email: fbUser.email || '',
+        photoURL: fbUser.photoURL || '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        customUsername: null
+      };
+      await ref.set(profile);
+      return profile;
+    }
+
+    function getDisplayName() {
+      if (!userProfile && !currentUser) return 'Névtelen';
+      return userProfile?.customUsername || userProfile?.displayName
+          || currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Játékos';
+    }
+
+    function googleSignIn() {
+      if (!_auth) { alert('Firebase még nem töltődött be, próbáld újra.'); return; }
+      const provider = new firebase.auth.GoogleAuthProvider();
+      _auth.signInWithPopup(provider).catch(err => {
+        const ae = document.getElementById('authError');
+        if (ae) { ae.textContent = err.message; ae.style.display = 'block'; }
+      });
+    }
+
+    function signOut() { _auth && _auth.signOut(); }
+
+    function showUsernameEditor() {
+      const cur = getDisplayName();
+      const ov = document.createElement('div');
+      ov.id = 'unameOv';
+      ov.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(5,7,18,.85);backdrop-filter:blur(14px);padding:20px;box-sizing:border-box;';
+      ov.innerHTML = `
+        <div style="background:rgba(16,20,40,.97);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:26px;width:100%;max-width:340px;box-sizing:border-box;">
+          <h3 style="margin:0 0 5px;font-size:17px;font-weight:900;">Felhasználónév</h3>
+          <p style="margin:0 0 16px;font-size:12px;color:#aeb7d7;">Ez jelenik meg a statisztikáidban és a ranglistán.</p>
+          <input id="unameInput" type="text" maxlength="32" value="${cur.replace(/"/g,'&quot;')}"
+            style="width:100%;background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.18);border-radius:11px;padding:11px 13px;color:#f5f7ff;font-size:14px;box-sizing:border-box;margin-bottom:11px;outline:none;font-family:inherit;" />
+          <div style="display:flex;gap:8px;">
+            <button onclick="document.getElementById('unameOv').remove()"
+              style="flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:11px;padding:11px;color:#f5f7ff;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit;">Mégse</button>
+            <button onclick="_saveUsername()"
+              style="flex:2;background:linear-gradient(135deg,#7c5cff,#28d7ff);border:none;border-radius:11px;padding:11px;color:#fff;font-weight:900;font-size:13px;cursor:pointer;font-family:inherit;">Mentés</button>
+          </div>
+        </div>`;
+      document.body.appendChild(ov);
+      const inp = document.getElementById('unameInput');
+      inp.focus(); inp.select();
+      inp.onkeydown = e => { if (e.key==='Enter') _saveUsername(); if (e.key==='Escape') ov.remove(); };
+    }
+
+    window._saveUsername = async function() {
+      const v = document.getElementById('unameInput')?.value?.trim();
+      if (!v || !currentUser || !_db) return;
+      await _db.collection('users').doc(currentUser.uid).update({ customUsername: v, displayName: v });
+      if (userProfile) { userProfile.customUsername = v; userProfile.displayName = v; }
+      document.getElementById('unameOv')?.remove();
+      renderAuthUI();
+      refreshLeaderboard();
+    };
+
+    // ── Auth UI ──
+    function renderAuthUI() {
+      const el = document.getElementById('authArea');
+      if (!el) return;
+      if (!_fbReady) {
+        el.innerHTML = `<div style="color:#aeb7d7;font-size:12px;text-align:center;padding:6px 0;">Firebase betöltése...</div>`;
+        return;
+      }
+      if (currentUser) {
+        const name = getDisplayName();
+        el.innerHTML = `
+          <div class="auth-user">
+            <div class="auth-avatar">${name[0].toUpperCase()}</div>
+            <div class="auth-info">
+              <div class="auth-name">${name}</div>
+              <div class="auth-provider">${currentUser.provider==='google.com'?'🔵 Google':'👤 Helyi'}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <button class="ghost auth-signout" onclick="showUsernameEditor()">✏️ Név</button>
+              <button class="ghost auth-signout" onclick="signOut()">Kilépés</button>
+            </div>
+          </div>`;
+      } else {
+        el.innerHTML = `
+          <button class="google-signin-btn" onclick="googleSignIn()">
+            <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Bejelentkezés Google-lal
+          </button>
+          <div id="authError" style="display:none;color:#ff6b6b;font-size:11px;margin-top:5px;"></div>
+          <div class="auth-hint">📊 Bejelentkezve az eredményeid felhőben tárolódnak – bármely eszközön elérheted</div>`;
+      }
+    }
+
+    // ── Firestore saves ──
+    let _pendingSave = false;
+    async function saveArcadeAttempt() {
+      if (!currentUser || !_db || _pendingSave) return;
+      _pendingSave = true;
+      try {
+        const level = canonicalDifficulty(state.arcade.difficulty || 'easy');
+        const rounds = state.arcade.total || 20;
+        const key = level + rounds;
+        const attempt = {
+          date: new Date().toISOString(),
+          ts: firebase.firestore.FieldValue.serverTimestamp(),
+          score: state.arcade.score || 0,
+          correct: state.arcade.correct || 0,
+          bestStreak: state.arcade.bestStreak || 0,
+          questions: rounds,
+          difficulty: level,
+          log: (state.arcade.questionLog || []).slice()
+        };
+        const uid = currentUser.uid;
+        // attempts history
+        const attRef = _db.collection('users').doc(uid).collection('attempts').doc(key);
+        const attSnap = await attRef.get();
+        let history = attSnap.exists ? (attSnap.data().history || []) : [];
+        history.unshift(attempt);
+        if (history.length > 5) history.length = 5;
+        await attRef.set({ history, key });
+        // best record
+        const sRef = _db.collection('users').doc(uid).collection('stats').doc('arcade');
+        const sSnap = await sRef.get();
+        const sData = sSnap.exists ? sSnap.data() : {};
+        const prev = (sData[key] || {}).best;
+        const isBetter = !prev || attempt.score > prev.score
+          || (attempt.score===prev.score && attempt.correct > prev.correct)
+          || (attempt.score===prev.score && attempt.correct===prev.correct && attempt.bestStreak > prev.bestStreak);
+        await sRef.set({ ...sData, [key]: {
+          best: isBetter ? attempt : prev,
+          lastScore: attempt.score,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }}, { merge: true });
+        // global leaderboard entry
+        const lbRef = _db.collection('leaderboard').doc(uid + '_' + key);
+        const prevLb = await lbRef.get();
+        if (!prevLb.exists || attempt.score > (prevLb.data().score||0)) {
+          await lbRef.set({
+            uid, key, score: attempt.score, correct: attempt.correct,
+            bestStreak: attempt.bestStreak, questions: rounds,
+            difficulty: level, displayName: getDisplayName(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+      } catch(e) { console.error('Save error:', e); }
+      _pendingSave = false;
+    }
+
+    async function loadMyStats() {
+      if (!currentUser || !_db) return { attempts: {}, stats: {} };
+      const uid = currentUser.uid;
+      const keys = ['easy20','medium20','premium20','easy30','medium30','premium30'];
+      const [attSnaps, sSnap] = await Promise.all([
+        Promise.all(keys.map(k => _db.collection('users').doc(uid).collection('attempts').doc(k).get())),
+        _db.collection('users').doc(uid).collection('stats').doc('arcade').get()
+      ]);
+      const attempts = {};
+      keys.forEach((k,i) => { attempts[k] = attSnaps[i].exists ? (attSnaps[i].data().history||[]) : []; });
+      return { attempts, stats: sSnap.exists ? sSnap.data() : {} };
+    }
+
+    async function loadLeaderboard(key) {
+      if (!_db) return [];
+      try {
+        const snap = await _db.collection('leaderboard')
+          .where('key','==',key).orderBy('score','desc').limit(15).get();
+        return snap.docs.map(d => d.data());
+      } catch(e) { return []; }
+    }
+
+    // ── Arcade mode: 20/30 rounds ──
+    // Use var assignments (not function decls) so no hoisting conflict
+    var _origCAQ = completeArcadeQuestion;
+    var _origFA  = finishArcade;
+
+    completeArcadeQuestion = function(points, autoAdvance, correct) {
+      // Log question for attempt card
+      if (state.arcade.active && state.current) {
+        if (!state.arcade.questionLog) state.arcade.questionLog = [];
+        state.arcade.questionLog.push({
+          teamId:   state.current.fotmobTeamId,
+          teamName: state.current.name,
+          correct:  correct !== undefined ? !!correct : points > 0,
+          points:   points || 0,
+          tier:     state.current.tier
+        });
+      }
+      _origCAQ(points, autoAdvance, correct);
+    };
+
+    finishArcade = function(showMessage) {
+      _origFA(showMessage);
+      saveArcadeAttempt().then(() => refreshStatsPanel());
+      // updateStats re-renders the stat block back to freeplay
+      updateStats();
+      // sync selects
+      const dm = document.getElementById('difficultyMobile');
+      const val = canonicalDifficulty(document.getElementById('difficulty').value || state.arcade.lastDifficulty || 'easy');
+      if (dm) dm.value = val;
+    };
+
+
+    // Called after arcade starts or ends — syncs all UI
+    window._syncArcadeUI = _syncArcadeUI;
+    function _syncArcadeUI() {
+      const arcadeOn = !!(state.arcade && state.arcade.active);
+      // Sync both difficulty selects
+      const val = arcadeOn
+        ? (state.arcade.difficulty || 'easy')
+        : canonicalDifficulty(document.getElementById('difficulty').value || state.arcade.lastDifficulty || 'easy');
+      const dm = document.getElementById('difficultyMobile');
+      if (dm) dm.value = val;
+      // Re-render stat block
+      updateStats();
+      // Load a fresh question when entering arcade (logo refresh)
+      if (arcadeOn) {
+        if (typeof clearTimeout !== 'undefined' && state.autoNextTimer) {
+          clearTimeout(state.autoNextTimer);
+          state.autoNextTimer = null;
+        }
+        nextQuestion();
+      }
+    }
+    function startArcadeNew(forceDifficulty, rounds) {
+      const r = rounds || 20;
+      hideArcadeEndOverlay();
+      const selected = syncDifficultySelect(selectedDifficultyFrom(forceDifficulty));
+      state.mode = "logo";
+      state.arcade.active  = true;
+      state.arcade.total   = r;
+      state.arcade.rounds  = r;
+      state.arcade.done    = 0;
+      state.arcade.score   = 0;
+      state.arcade.correct = 0;
+      state.arcade.streak  = 0;
+      state.arcade.bestStreak  = 0;
+      state.arcade.difficulty  = selected;
+      state.arcade.lastDifficulty = selected;
+      state.arcade.used        = new Set();
+      state.arcade.questionLog = [];
+      state.lastEarned = 0;
+      state.peekedLogo = false;
+      resetScoreboard();
+      document.getElementById('difficulty').disabled = true;
+      document.getElementById('logoMode').classList.add('active');
+      document.getElementById('playerMode').classList.remove('active');
+      document.getElementById('message').textContent = `Arcade mód: ${difficultyLabel(selected)} szint, ${r} logó.`;
+      document.getElementById('message').className = 'message good';
+      updateStats();
+      _refreshArcadeActiveUI();
+      // sync mobile difficulty select + stat block + fresh question
+      _syncArcadeUI();
+    }
+
+    window.startArcade    = function(fd) { startArcadeNew(fd, 20); };
+    window.startArcadeNew = startArcadeNew;
+    window.exitArcade     = exitArcade;
+
+    // Override showArcadeEndOverlay to use our startArcadeNew
+    showArcadeEndOverlay = function() {
+      ensureArcadeOverlay();
+      const ov = document.getElementById('arcadeEndOverlay');
+      if (!ov) return;
+      const rounds = state.arcade.total || 20;
+      const diff = state.arcade.difficulty || 'easy';
+      const txt = document.getElementById('arcadeEndText');
+      if (txt) txt.textContent = `${difficultyLabel(diff)} szint · ${state.arcade.score} pont / ${rounds} logó · ${state.arcade.correct||0} jó`;
+      ov.classList.add('show');
+      const exitBtn    = document.getElementById('arcadeEndExit');
+      const restartBtn = document.getElementById('arcadeEndRestart');
+      const otherBtn   = document.getElementById('arcadeEndOther');
+      if (exitBtn)    exitBtn.onclick    = () => finishArcade(false);
+      if (restartBtn) restartBtn.onclick = () => startArcadeNew(diff, rounds);
+      if (otherBtn)   otherBtn.onclick   = () => {
+        const order = ['easy','medium','premium'];
+        const next = order[(order.indexOf(diff)+1) % order.length];
+        syncDifficultySelect(next);
+        startArcadeNew(next, rounds);
+      };
+    };
+
+    // ── Active arcade stats UI ──
+    function _refreshArcadeActiveUI() {
+      const box = document.getElementById('arcadeStats');
+      if (!box) return;
+      if (!state.arcade.active) { refreshStatsPanel(); return; }
+      box.innerHTML = `
+        <span class="label">Arcade – aktív</span>
+        <div class="stats" style="margin-top:6px;">
+          <div class="stat"><b id="arcadeLevel"></b><span>szint</span></div>
+          <div class="stat"><b id="arcadeScore"></b><span>pont</span></div>
+          <div class="stat"><b id="arcadeHits"></b><span>helyes</span></div>
+          <div class="stat"><b id="arcadeStreak"></b><span>sorozat</span></div>
+          <div class="stat"><b id="arcadeProgress"></b><span>kész</span></div>
+        </div>`;
+      const set = (id, v) => { const e = document.getElementById(id); if(e) e.innerHTML=v; };
+      set('arcadeLevel',    difficultyLabel(state.arcade.difficulty));
+      set('arcadeScore',    `${state.arcade.score}<span class="score-delta">(+${state.lastEarned||0})</span>`);
+      set('arcadeHits',     `${state.arcade.correct||0}/${state.arcade.total}`);
+      set('arcadeStreak',   state.arcade.streak||0);
+      set('arcadeProgress', `${state.arcade.done}/${state.arcade.total}`);
+      const ab = document.getElementById('arcadeBtn');
+      if (ab) { ab.textContent = 'Arcade folyamatban'; ab.disabled = true; }
+      const ae = document.getElementById('arcadeExitBtn');
+      if (ae) ae.style.display = '';
+    }
+
+    // Override the original updateArcadeStats to use ours
+    updateArcadeStats = function() {
+      if (state.arcade && state.arcade.active) {
+        _refreshArcadeActiveUI();
+      } else {
+        // Lightweight inline update when not active (avoids async full refresh each keypress)
+        const ab = document.getElementById('arcadeBtn');
+        if (ab) { ab.textContent = 'Arcade üzemmód indítása'; ab.disabled = false; }
+        const ae = document.getElementById('arcadeExitBtn');
+        if (ae) ae.style.display = 'none';
+      }
+    };
+
+    // Full async refresh for the stats panel (called after game ends / on login)
+    async function refreshStatsPanel() {
+      const box = document.getElementById('arcadeStats');
+      if (!box) return;
+      if (state.arcade && state.arcade.active) { _refreshArcadeActiveUI(); return; }
+
+      const ab = document.getElementById('arcadeBtn');
+      if (ab) { ab.textContent = 'Arcade üzemmód indítása'; ab.disabled = false; }
+      const ae = document.getElementById('arcadeExitBtn');
+      if (ae) ae.style.display = 'none';
+
+      let attData = {}, statsData = {};
+      if (currentUser && _db) {
+        try { ({ attempts: attData, stats: statsData } = await loadMyStats()); }
+        catch(e) { console.warn(e); }
+      }
+
+      const loginBlock = ''; // hint shown in auth area
+
+      box.innerHTML = `
+        <span class="label">Arcade mód</span>
+        ${loginBlock}
+        <div class="arcade-tabs">
+          <button class="arcade-tab-btn active" onclick="showArcadeTab('20',this)">20 fordulós</button>
+          <button class="arcade-tab-btn" onclick="showArcadeTab('30',this)">30 fordulós</button>
+        </div>
+        <div id="arcadeTab20">
+          <div class="stats-difficulty-grid">
+            ${_catHtml('easy20',   '🟢 Könnyű – 20 logó', 20, attData, statsData)}
+            ${_catHtml('medium20', '🟡 Közepes – 20 logó',20, attData, statsData)}
+            ${_catHtml('premium20','🔴 Nehéz – 20 logó',  20, attData, statsData)}
+          </div>
+        </div>
+        <div id="arcadeTab30" style="display:none">
+          <div class="stats-difficulty-grid">
+            ${_catHtml('easy30',   '🟢 Könnyű – 30 logó', 30, attData, statsData)}
+            ${_catHtml('medium30', '🟡 Közepes – 30 logó',30, attData, statsData)}
+            ${_catHtml('premium30','🔴 Nehéz – 30 logó',  30, attData, statsData)}
+          </div>
+        </div>`;
+    }
+
+    window.showArcadeTab = function(tab, btn) {
+      ['20','30'].forEach(t => {
+        const el = document.getElementById('arcadeTab'+t);
+        if (el) el.style.display = t===tab ? '' : 'none';
+      });
+      document.querySelectorAll('.arcade-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    };
+
+    function _catHtml(key, label, rounds, att, stats) {
+      const history = (att[key]||[]);
+      const best    = (stats[key]||{}).best || null;
+      const diff    = key.replace(/\d+$/,'');
+      return `
+        <div class="stats-category">
+          <div class="stats-cat-header">
+            <span class="stats-cat-label">${label}</span>
+            <button class="arcade-start-btn primary" onclick="startArcadeNew('${diff}',${rounds})">▶ Indítás</button>
+          </div>
+          <div class="stats-subsection">
+            <div class="stats-subsection-title">🏆 Legjobb</div>
+            ${_bestCardHtml(best)}
+          </div>
+          <div class="stats-subsection">
+            <div class="stats-subsection-title">🕐 Legutóbbi 5</div>
+            ${history.length ? history.map((a,i)=>_attCardHtml(a,i)).join('') : '<div class="no-record">Még nincs próbálkozás</div>'}
+          </div>
+        </div>`;
+    }
+
+    function _fmtDate(iso) {
+      const d=new Date(iso), p=n=>String(n).padStart(2,'0');
+      return `${d.getFullYear()}.${p(d.getMonth()+1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+    }
+
+    function _logoGrid(log) {
+      if (!log||!log.length) return '';
+      return `<div class="attempt-logos">${log.map(q=>`
+        <div class="attempt-logo-item ${q.correct?'correct':'incorrect'}" title="${(q.teamName||'').replace(/"/g,'&quot;')}">
+          <img src="https://images.fotmob.com/image_resources/logo/teamlogo/${q.teamId}_xsmall.png"
+               alt="" loading="lazy" onerror="this.style.display='none'"/>
+          <div class="attempt-logo-check">${q.correct?'✓':'✗'}</div>
+        </div>`).join('')}</div>`;
+    }
+
+    function _attCardHtml(a, i) {
+      const uid = 'a'+Math.random().toString(36).slice(2,8);
+      const hasLog = a.log && a.log.length;
+      return `
+        <div class="attempt-card ${i===0?'latest':''}">
+          <div class="attempt-header">
+            <div class="attempt-meta">
+              <span class="attempt-score">${a.score} pont</span>
+              <span class="attempt-hits">${a.correct}/${a.questions||20} helyes</span>
+              <span class="attempt-streak">🔥${a.bestStreak}</span>
+            </div>
+            <div class="attempt-date">${_fmtDate(a.date)}</div>
+          </div>
+          ${hasLog ? `
+            <div id="${uid}" style="display:none">${_logoGrid(a.log)}</div>
+            <button class="attempt-expand-btn" onclick="toggleAttemptLog('${uid}',this)">Logók megtekintése ▾</button>` : ''}
+        </div>`;
+    }
+
+    function _bestCardHtml(a) {
+      if (!a) return '<div class="no-record">Még nincs rekord</div>';
+      const uid = 'b'+Math.random().toString(36).slice(2,8);
+      const hasLog = a.log && a.log.length;
+      const d = new Date(a.date), p=n=>String(n).padStart(2,'0');
+      const dateStr = `${d.getFullYear()}.${p(d.getMonth()+1)}.${p(d.getDate())}`;
+      return `
+        <div class="attempt-card best-card">
+          <div class="attempt-header">
+            <div class="attempt-meta">
+              <span class="attempt-score">🏆 ${a.score} pont</span>
+              <span class="attempt-hits">${a.correct}/${a.questions||20} helyes</span>
+              <span class="attempt-streak">🔥${a.bestStreak}</span>
+            </div>
+            <div class="attempt-date">${dateStr}</div>
+          </div>
+          ${hasLog ? `
+            <div id="${uid}" style="display:none">${_logoGrid(a.log)}</div>
+            <button class="attempt-expand-btn" onclick="toggleAttemptLog('${uid}',this)">Logók megtekintése ▾</button>` : ''}
+        </div>`;
+    }
+
+    window.toggleAttemptLog = function(id, btn) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const vis = el.style.display !== 'none';
+      el.style.display = vis ? 'none' : 'block';
+      btn.textContent  = vis ? 'Logók megtekintése ▾' : 'Elrejtés ▴';
+    };
+
+    // ── Leaderboard (right panel, desktop only) ──
+    let _lbKey = 'easy20';
+
+    async function refreshLeaderboard() {
+      const box = document.getElementById('lbPanel');
+      if (!box) return;
+      const rows = await loadLeaderboard(_lbKey);
+      const me = currentUser ? currentUser.uid : null;
+      box.innerHTML = `
+        <div class="lb-header">
+          <span class="label" style="font-size:11px;">🏅 Ranglista</span>
+          <select id="lbKeySelect" onchange="_lbKey=this.value;refreshLeaderboard()"
+            style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.14);border-radius:9px;color:#f5f7ff;font-size:11px;padding:4px 8px;font-family:inherit;">
+            ${['easy20','medium20','premium20','easy30','medium30','premium30'].map(k=>`
+              <option value="${k}" ${k===_lbKey?'selected':''}>${
+                k.replace('easy','🟢 Könnyű').replace('medium','🟡 Közepes').replace('premium','🔴 Nehéz')
+                 .replace('20',' – 20').replace('30',' – 30')
+              }</option>`).join('')}
+          </select>
+        </div>
+        ${rows.length === 0 ? '<div class="lb-empty">Még nincs eredmény ebben a kategóriában</div>' : `
+        <div class="lb-table">
+          ${rows.map((r,i) => `
+            <div class="lb-row ${r.uid===me?'lb-me':''}">
+              <div class="lb-rank">${i+1}</div>
+              <div class="lb-name">${(r.displayName||'Névtelen').slice(0,22)}</div>
+              <div class="lb-score">${r.score}</div>
+              <div class="lb-detail">${r.correct}/${r.questions||20} · 🔥${r.bestStreak}</div>
+            </div>`).join('')}
+        </div>`}`;
+    }
+
+    // ── DOM injection + CSS ──
+    (function injectV33() {
+
+      // ── CSS ──
+      const st = document.createElement('style');
+      st.textContent = `
+        body {
+          background:
+            radial-gradient(ellipse 70% 55% at 18% 14%, rgba(124,92,255,.28), transparent),
+            radial-gradient(ellipse 60% 50% at 84% 0%,  rgba(40,215,255,.18), transparent),
+            radial-gradient(ellipse 50% 40% at 50% 92%, rgba(56,217,150,.07), transparent),
+            linear-gradient(160deg, #080b16 0%, #101428 55%, #060810 100%);
+        }
+        h1 {
+          background: linear-gradient(135deg, #fff 35%, rgba(180,160,255,.9) 70%, rgba(40,215,255,.85) 100%);
+          -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+        }
+        header .pill {
+          background: linear-gradient(135deg,rgba(124,92,255,.22),rgba(40,215,255,.12));
+          border-color:rgba(124,92,255,.3); font-size:11px;
+        }
+        .panel { border:1px solid rgba(255,255,255,.11); background:rgba(255,255,255,.055); backdrop-filter:blur(22px); }
+        .quiz-card { background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.11); }
+        .mode-btn.active,.small-btn.active { background:linear-gradient(135deg,rgba(124,92,255,.85),rgba(40,215,255,.65)); box-shadow:0 4px 18px rgba(124,92,255,.28); border-color:transparent; }
+        .primary { background:linear-gradient(135deg,#7c5cff,#28d7ff); box-shadow:0 4px 14px rgba(124,92,255,.25); }
+        .primary:hover { box-shadow:0 6px 22px rgba(124,92,255,.38); transform:translateY(-1px); }
+        .ghost:hover { background:rgba(255,255,255,.11); }
+        .stat { background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.07); border-radius:16px; }
+        .badge { background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.11); }
+        .message.good { background:rgba(56,217,150,.08); padding:8px 12px; border-radius:11px; border:1px solid rgba(56,217,150,.2); }
+        .message.bad  { background:rgba(255,107,107,.07); padding:8px 12px; border-radius:11px; border:1px solid rgba(255,107,107,.18); }
+        .message.warn { background:rgba(255,209,102,.06); padding:8px 12px; border-radius:11px; border:1px solid rgba(255,209,102,.16); }
+        .label { font-weight:900; letter-spacing:.09em; color:rgba(174,183,215,.65); }
+        .group { border-bottom:1px solid rgba(255,255,255,.065); }
+        .group:last-child { border-bottom:none; }
+        .media-wrap { border:1px solid rgba(255,255,255,.09); }
+        select { background:rgba(0,0,0,.28); appearance:none; -webkit-appearance:none;
+          background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath fill='rgba(174,183,215,.55)' d='M5.5 7L0 0h11z'/%3E%3C/svg%3E");
+          background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; }
+        ::-webkit-scrollbar{width:5px} ::-webkit-scrollbar-track{background:rgba(0,0,0,.15);border-radius:3px}
+        ::-webkit-scrollbar-thumb{background:rgba(124,92,255,.4);border-radius:3px}
+
+        /* Auth */
+        .auth-user{display:flex;align-items:center;gap:9px;}
+        .auth-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#28d7ff);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0;}
+        .auth-info{flex:1;min-width:0;}
+        .auth-name{font-weight:800;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .auth-provider{font-size:11px;color:var(--muted);margin-top:1px;}
+        .auth-signout{font-size:11px;padding:4px 8px;min-height:auto;border-radius:7px;color:var(--muted);cursor:pointer;}
+        .google-signin-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;background:rgba(255,255,255,.93);color:#222;border:none;border-radius:13px;padding:11px 16px;font-weight:800;font-size:13px;cursor:pointer;transition:opacity .15s,transform .12s;font-family:inherit;}
+        .google-signin-btn:hover{opacity:.88;transform:translateY(-1px);}
+        .auth-hint{font-size:11px;color:var(--muted);text-align:center;margin-top:6px;opacity:.7;line-height:1.4;}
+
+        /* Arcade tabs */
+        .arcade-tabs{display:flex;gap:6px;margin:10px 0 8px;}
+        .arcade-tab-btn{flex:1;padding:8px;border-radius:11px;font-weight:800;font-size:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);color:var(--muted);cursor:pointer;transition:all .15s;font-family:inherit;}
+        .arcade-tab-btn.active{background:linear-gradient(135deg,rgba(124,92,255,.8),rgba(40,215,255,.6));border-color:transparent;color:var(--text);}
+
+        /* Stats */
+        .stats-difficulty-grid{display:grid;gap:9px;}
+        .stats-category{background:rgba(0,0,0,.14);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 11px;}
+        .stats-cat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:6px;}
+        .stats-cat-label{font-weight:900;font-size:12px;}
+        .arcade-start-btn{font-size:12px;padding:5px 10px;min-height:auto;border-radius:8px;flex-shrink:0;font-weight:900;}
+        .stats-subsection{margin-bottom:7px;} .stats-subsection:last-child{margin-bottom:0;}
+        .stats-subsection-title{font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+        .stats-login-note{font-size:11.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:9px 11px;margin-bottom:9px;text-align:center;line-height:1.4;}
+        .no-record{font-size:12px;color:var(--muted);text-align:center;padding:8px 0;opacity:.55;}
+
+        /* Attempt cards */
+        .attempt-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:8px 10px;margin-bottom:4px;}
+        .attempt-card:last-child{margin-bottom:0;}
+        .attempt-card.latest{border-color:rgba(40,215,255,.2);background:rgba(40,215,255,.03);}
+        .attempt-card.best-card{border-color:rgba(255,209,0,.22);background:rgba(255,209,0,.025);}
+        .attempt-header{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;}
+        .attempt-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+        .attempt-score{font-weight:900;font-size:13px;}
+        .attempt-hits{font-size:11.5px;color:var(--good);font-weight:800;}
+        .attempt-streak{font-size:11.5px;color:var(--warn);font-weight:800;}
+        .attempt-date{font-size:10.5px;color:var(--muted);white-space:nowrap;}
+        .attempt-expand-btn{background:none;border:1px solid rgba(255,255,255,.1);color:var(--accent2);font-size:11px;font-weight:800;cursor:pointer;border-radius:7px;padding:4px 8px;margin-top:6px;font-family:inherit;}
+        .attempt-expand-btn:hover{background:rgba(40,215,255,.07);}
+        .attempt-logos{display:flex;flex-wrap:wrap;gap:5px;padding:7px;background:rgba(0,0,0,.18);border-radius:9px;border:1px solid rgba(255,255,255,.05);margin-top:6px;}
+        .attempt-logo-item{position:relative;width:34px;height:34px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;}
+        .attempt-logo-item img{width:26px;height:26px;object-fit:contain;}
+        .attempt-logo-item.correct{border-color:rgba(56,217,150,.38);background:rgba(56,217,150,.07);}
+        .attempt-logo-item.incorrect{border-color:rgba(255,107,107,.28);background:rgba(255,107,107,.05);}
+        .attempt-logo-check{position:absolute;bottom:1px;right:2px;font-size:8px;font-weight:900;line-height:1;}
+        .attempt-logo-item.correct .attempt-logo-check{color:var(--good);}
+        .attempt-logo-item.incorrect .attempt-logo-check{color:var(--bad);}
+
+        /* Leaderboard inline inside quiz-card */
+        .lb-panel-inline {
+          padding: 16px 2px 4px;
+          border-top: 1px solid rgba(255,255,255,.08);
+          margin-top: 4px;
+        }
+        @media (max-width: 900px) {
+          .lb-panel-inline { display: none; }
+        }
+        .lb-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;}
+        .lb-empty{font-size:12px;color:var(--muted);text-align:center;padding:16px 0;opacity:.5;}
+        .lb-table{display:grid;gap:4px;}
+        .lb-row{display:grid;grid-template-columns:22px 1fr auto;grid-template-rows:auto auto;gap:0 8px;align-items:center;padding:7px 9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;font-size:12px;}
+        .lb-row.lb-me{border-color:rgba(124,92,255,.35);background:rgba(124,92,255,.08);}
+        .lb-rank{font-weight:900;color:var(--muted);font-size:11px;grid-row:1/3;align-self:center;}
+        .lb-name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .lb-score{font-weight:900;color:var(--good);text-align:right;}
+        .lb-detail{grid-column:2/4;font-size:10.5px;color:var(--muted);margin-top:1px;}
+        .lb-row:nth-child(1) .lb-rank{color:#ffd166;}
+        .lb-row:nth-child(2) .lb-rank{color:#aeb7d7;}
+        .lb-row:nth-child(3) .lb-rank{color:#cd7f32;}
+      `;
+      document.head.appendChild(st);
+
+      // ── Leaderboard injected INSIDE quiz-card, after answer-area ──
+      if (!document.getElementById('lbPanel')) {
+        const answerArea = document.querySelector('.answer-area');
+        if (answerArea) {
+          const lb = document.createElement('div');
+          lb.id = 'lbPanel';
+          lb.className = 'lb-panel-inline';
+          answerArea.after(lb);
+        }
+      }
+
+      // ── Auth area in left sidebar ──
+      const panel = document.querySelector('.layout > .panel:not(.mobile-after-quiz)');
+      if (panel && !document.getElementById('authArea')) {
+        const wrap = document.createElement('div');
+        wrap.className = 'group';
+        wrap.style.cssText = 'padding:11px 0 4px;';
+        wrap.innerHTML = '<span class="label" style="display:block;margin-bottom:8px;">Fiók</span><div id="authArea"></div>';
+        panel.appendChild(wrap);
+      }
+
+      // ── Remove old arcade start button if exists ──
+      const oldBtn = document.getElementById('arcadeBtn');
+      if (oldBtn) oldBtn.remove();
+
+      renderAuthUI();
+      refreshLeaderboard();
+    })();
+
+    setTimeout(() => {
+      refreshStatsPanel();
+      refreshLeaderboard();
+      if (typeof ensureArcadeRuntime === 'function') ensureArcadeRuntime();
+    }, 300);
+
+
+  
+    // ── Hamburger menu ──
+    function openDrawer() {
+      document.getElementById('hamDrawer').classList.add('open');
+      document.getElementById('hamOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      _renderHamContent();
+    }
+    function closeDrawer() {
+      document.getElementById('hamDrawer').classList.remove('open');
+      document.getElementById('hamOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    window.openDrawer = openDrawer;
+    window.closeDrawer = closeDrawer;
+
+    // Sync logoMode/playerMode ham buttons with main buttons
+    document.addEventListener('DOMContentLoaded', () => {
+      const lh = document.getElementById('logoModeHam');
+      const ph = document.getElementById('playerModeHam');
+      if (lh) lh.onclick = () => { setMode('logo'); _syncHamModeButtons(); };
+      if (ph) ph.onclick = () => { setMode('player'); _syncHamModeButtons(); };
+
+      // Sync mobile blur buttons with desktop ones
+      const monBtn  = document.getElementById('maskOnMob');
+      const moffBtn = document.getElementById('maskOffMob');
+      if (monBtn) monBtn.onclick = () => {
+        state.blurLogo = true;
+        document.getElementById('maskOn')?.classList.add('active');
+        document.getElementById('maskOff')?.classList.remove('active');
+        monBtn.classList.add('active'); moffBtn?.classList.remove('active');
+        rerenderCurrentImage();
+      };
+      if (moffBtn) moffBtn.onclick = () => {
+        state.blurLogo = false;
+        if (state.current && state.mode==='logo' && !state.locked) {
+          state.peekedLogo = true;
+          if (state.arcade.active) state.arcade.streak = 0; else state.streak = 0;
+          updateStats(); updateArcadeStats();
+        }
+        document.getElementById('maskOff')?.classList.add('active');
+        document.getElementById('maskOn')?.classList.remove('active');
+        moffBtn.classList.add('active'); monBtn?.classList.remove('active');
+        rerenderCurrentImage();
+      };
+    });
+
+    function _syncHamModeButtons() {
+      const lh = document.getElementById('logoModeHam');
+      const ph = document.getElementById('playerModeHam');
+      if (lh) lh.classList.toggle('active', state.mode==='logo');
+      if (ph) ph.classList.toggle('active', state.mode==='player');
+      const mb = document.getElementById('modeBadge');
+      if (mb) mb.textContent = state.mode==='logo' ? 'Logótipp' : 'Játékos';
+    }
+
+    // Mobile stats mirror
+    const _origUpdateStats = updateStats;
+    updateStats = function() {
+      const arcadeOn = !!(state.arcade && state.arcade.active);
+      const dl = typeof difficultyLabel === 'function' ? difficultyLabel(state.arcade.difficulty) : '';
+      const label = document.getElementById('statsGroupLabel');
+      const grid  = document.getElementById('statsGrid');
+      const exitD = document.getElementById('arcadeExitDesktop');
+
+      if (arcadeOn) {
+        // Arcade mode: rewrite grid with arcade data, skip _origUpdateStats
+        // (score/streak DOM IDs don't exist in arcade grid)
+        if (label) label.textContent = `Arcade – ${dl}`;
+        if (grid) grid.innerHTML = `
+          <div class="stat"><b>${state.arcade.score||0}</b><span>pont</span></div>
+          <div class="stat"><b>${state.arcade.correct||0}/${state.arcade.total}</b><span>helyes</span></div>
+          <div class="stat"><b>${state.arcade.streak||0}</b><span>sorozat</span></div>
+          <div class="stat"><b>${state.arcade.done}/${state.arcade.total}</b><span>logó</span></div>`;
+        if (exitD) exitD.style.display = '';
+      } else {
+        // Freeplay mode: restore IDs so _origUpdateStats can find them
+        if (label) label.textContent = 'Statisztika';
+        if (grid) grid.innerHTML = `
+          <div class="stat"><b id="score">${state.score}</b><span>pont</span></div>
+          <div class="stat"><b id="streak">${state.streak}</b><span>sorozat</span></div>
+          <div class="stat"><b id="correct">${state.correct}</b><span>jó</span></div>
+          <div class="stat"><b id="total">${state.total}</b><span>összes</span></div>`;
+        if (exitD) exitD.style.display = 'none';
+        _origUpdateStats();
+      }
+    };
+
+    async function _renderHamContent() {
+      // Auth
+      const ha = document.getElementById('hamAuthArea');
+      if (ha) {
+        if (!_fbReady) {
+          ha.innerHTML = '<div style="color:#aeb7d7;font-size:12px;">Firebase betöltés...</div>';
+        } else if (currentUser) {
+          const name = getDisplayName();
+          ha.innerHTML = `
+            <div class="auth-user">
+              <div class="auth-avatar">${name[0].toUpperCase()}</div>
+              <div class="auth-info">
+                <div class="auth-name">${name}</div>
+                <div class="auth-provider">${currentUser.provider==='google.com'?'🔵 Google':'👤 Helyi'}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <button class="ghost auth-signout" onclick="showUsernameEditor()">✏️ Név</button>
+                <button class="ghost auth-signout" onclick="signOut()">Kilépés</button>
+              </div>
+            </div>`;
+        } else {
+          ha.innerHTML = `
+            <button class="google-signin-btn" onclick="googleSignIn()">
+              <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+              Bejelentkezés Google-lal
+            </button>
+            <div class="auth-hint" style="margin-top:8px;">📊 Bejelentkezve az eredményeid felhőben tárolódnak – bármely eszközön elérheted</div>`;
+        }
+      }
+
+      // Arcade buttons
+      const ag = document.getElementById('hamArcadeGrid');
+      if (ag) {
+        const diffs = [
+          { key:'easy',    emoji:'🟢', label:'Könnyű' },
+          { key:'medium',  emoji:'🟡', label:'Közepes' },
+          { key:'premium', emoji:'🔴', label:'Nehéz' }
+        ];
+        ag.innerHTML = [20,30].flatMap(r =>
+          diffs.map(d => `
+            <button class="ham-arcade-btn" onclick="startArcadeNew('${d.key}',${r});closeDrawer();">
+              <span style="display:block;font-size:13px;">${d.emoji} ${d.label}</span>
+              <span class="btn-rounds">${r} fordulós</span>
+            </button>`)
+        ).join('');
+      }
+
+      // Stats
+      const hs = document.getElementById('hamStatsContent');
+      if (hs) {
+        if (!currentUser) {
+          hs.innerHTML = '<div class="no-record">Bejelentkezés után látható</div>';
+        } else {
+          hs.innerHTML = '<div class="no-record">Betöltés...</div>';
+          try {
+            const { attempts, stats } = await loadMyStats();
+            const keys = ['easy20','medium20','premium20','easy30','medium30','premium30'];
+            const labels = {
+              easy20:'🟢 Könnyű 20', medium20:'🟡 Közepes 20', premium20:'🔴 Nehéz 20',
+              easy30:'🟢 Könnyű 30', medium30:'🟡 Közepes 30', premium30:'🔴 Nehéz 30'
+            };
+            hs.innerHTML = keys.map(k => {
+              const hist = (attempts[k]||[]);
+              const best = (stats[k]||{}).best;
+              const last = hist[0];
+              if (!best && !last) return `<div style="margin-bottom:6px;"><span style="font-size:12px;font-weight:800;">${labels[k]}</span> <span class="no-record" style="display:inline;padding:0;">— nincs</span></div>`;
+              const show = best || last;
+              return `<div style="margin-bottom:8px;">
+                <div style="font-size:12px;font-weight:800;margin-bottom:3px;">${labels[k]}</div>
+                ${_bestCardHtml(show)}
+              </div>`;
+            }).join('');
+          } catch(e) {
+            hs.innerHTML = '<div class="no-record">Hiba a betöltésnél</div>';
+          }
+        }
+      }
+
+      // Leaderboard in drawer
+      const hl = document.getElementById('hamLbContent');
+      if (hl) {
+        hl.innerHTML = `
+          <select id="hamLbKeySelect" onchange="_lbKey=this.value;_renderHamLb()"
+            style="width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.14);border-radius:10px;color:#f5f7ff;font-size:12px;padding:8px 10px;font-family:inherit;margin-bottom:8px;">
+            ${['easy20','medium20','premium20','easy30','medium30','premium30'].map(k=>`
+              <option value="${k}" ${k===_lbKey?'selected':''}>${
+                k.replace('easy','🟢 Könnyű').replace('medium','🟡 Közepes').replace('premium','🔴 Nehéz').replace('20',' – 20').replace('30',' – 30')
+              }</option>`).join('')}
+          </select>
+          <div id="hamLbRows"><div class="no-record">Betöltés...</div></div>`;
+        _renderHamLb();
+      }
+    }
+
+    async function _renderHamLb() {
+      const el = document.getElementById('hamLbRows');
+      if (!el) return;
+      el.innerHTML = '<div class="no-record">Betöltés...</div>';
+      const rows = await loadLeaderboard(_lbKey);
+      const me = currentUser ? currentUser.uid : null;
+      if (!rows.length) { el.innerHTML = '<div class="no-record">Még nincs eredmény</div>'; return; }
+      el.innerHTML = `<div class="lb-table">${rows.map((r,i)=>`
+        <div class="lb-row ${r.uid===me?'lb-me':''}">
+          <div class="lb-rank">${i+1}</div>
+          <div class="lb-name">${(r.displayName||'Névtelen').slice(0,20)}</div>
+          <div class="lb-score">${r.score}</div>
+          <div class="lb-detail">${r.correct}/${r.questions||20} · 🔥${r.bestStreak}</div>
+        </div>`).join('')}</div>`;
+    }
+    window._renderHamLb = _renderHamLb;
+
+</script>
 </body>
 </html>
