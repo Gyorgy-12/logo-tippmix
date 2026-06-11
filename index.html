@@ -27342,9 +27342,14 @@
       };
     }
 
+    function stripFourDigitYear(value) {
+      return (value || "").replace(/\b(?:18|19|20)\d{2}\b/g, " ").replace(/\s+/g, " ").trim();
+    }
+
     function displayAnswerName(item) {
       const fact = factFor(item);
-      return fact?.officialName || item.officialName || item.name;
+      const preferred = item.name || item.aliases?.[0] || fact?.aliases?.[0] || item.officialName || fact?.officialName;
+      return stripFourDigitYear(preferred || "");
     }
 
     function revealMeta(item) {
@@ -27945,7 +27950,14 @@
         fact?.officialName,
         ...cityAliases
       ].filter(Boolean);
-      return [...new Set(raw.map(normalize).filter(Boolean))];
+      const variants = new Set();
+      raw.forEach(value => {
+        const normalized = normalize(value);
+        const yearless = normalize(stripFourDigitYear(value));
+        if (normalized) variants.add(normalized);
+        if (yearless) variants.add(yearless);
+      });
+      return [...variants];
     }
 
     function isCorrect(input, item) {
@@ -28419,6 +28431,7 @@
       }
 
       updateStats();
+      setTimeout(refreshStatsPanel, 0);
       const dm = document.getElementById('difficultyMobile');
       const val = canonicalDifficulty(document.getElementById('difficulty').value || _snapDiff);
       if (dm) dm.value = val;
@@ -28842,7 +28855,7 @@
             <div title="${(q.teamName||'').replace(/"/g,'&quot;')}" style="position:relative;width:${boxSize}px;height:${boxSize}px;border-radius:12px;background:${q.correct?'rgba(56,217,150,.1)':'rgba(255,107,107,.07)'};border:2px solid ${q.correct?'rgba(56,217,150,.38)':'rgba(255,107,107,.28)'};display:flex;align-items:center;justify-content:center;overflow:hidden;">
               <img src="https://images.fotmob.com/image_resources/logo/teamlogo/${q.teamId}_xsmall.png" style="width:${logoSize}px;height:${logoSize}px;object-fit:contain;" loading="lazy" onerror="this.style.display='none'" />
               <div style="position:absolute;bottom:1px;right:2px;font-size:10px;font-weight:900;color:${q.correct?'#38d996':'#ff6b6b'};">${q.correct?'✓':'✕'}</div>
-              ${q.correct ? `<div style="position:absolute;top:1px;left:2px;font-size:8px;font-weight:950;color:#f5f7ff;background:${q.blurred?'rgba(56,217,150,.75)':'rgba(255,209,102,.75)'};border-radius:999px;padding:1px 3px;line-height:1;">${q.blurred?'B':'N'}</div>` : ''}
+              ${q.correct ? `<div style="position:absolute;top:2px;left:2px;font-size:${compact?10:12}px;font-weight:950;color:#07101f;background:${q.blurred?'#38d996':'#ffd166'};border-radius:999px;padding:${compact?'2px 4px':'3px 6px'};line-height:1;box-shadow:0 0 0 1px rgba(255,255,255,.35),0 4px 10px rgba(0,0,0,.35);">${q.blurred?'B':'N'}</div>` : ''}
             </div>`).join('')}
         </div>`;
       }
@@ -28936,13 +28949,13 @@
         }
 
         /* Auth */
-        .auth-user{display:flex;align-items:center;gap:9px;}
-        .auth-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#28d7ff);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0;}
-        .auth-avatar-img{width:34px;height:34px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid rgba(255,255,255,.2);}
+        .auth-user{display:flex;align-items:center;gap:12px;}
+        .auth-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#28d7ff);display:flex;align-items:center;justify-content:center;font-weight:950;font-size:17px;flex-shrink:0;}
+        .auth-avatar-img{width:42px;height:42px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid rgba(255,255,255,.24);}
         .auth-info{flex:1;min-width:0;}
-        .auth-name{font-weight:800;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .auth-provider{font-size:11px;color:var(--muted);margin-top:1px;}
-        .auth-signout{font-size:11px;padding:4px 8px;min-height:auto;border-radius:7px;color:var(--muted);cursor:pointer;}
+        .auth-name{font-weight:900;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .auth-provider{font-size:12.5px;color:var(--muted);margin-top:2px;}
+        .auth-signout{font-size:12px;padding:6px 10px;min-height:auto;border-radius:8px;color:var(--muted);cursor:pointer;}
         .google-signin-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;background:rgba(255,255,255,.93);color:#222;border:none;border-radius:13px;padding:11px 16px;font-weight:800;font-size:13px;cursor:pointer;transition:opacity .15s,transform .12s;font-family:inherit;}
         .google-signin-btn:hover{opacity:.88;transform:translateY(-1px);}
         .auth-hint{font-size:11px;color:var(--muted);text-align:center;margin-top:6px;opacity:.7;line-height:1.4;}
@@ -28977,12 +28990,12 @@
         .attempt-expand-btn{background:none;border:1px solid rgba(255,255,255,.1);color:var(--accent2);font-size:11px;font-weight:800;cursor:pointer;border-radius:7px;padding:4px 8px;margin-top:6px;font-family:inherit;}
         .attempt-expand-btn:hover{background:rgba(40,215,255,.07);}
         .attempt-logos{display:flex;flex-wrap:wrap;gap:5px;padding:7px;background:rgba(0,0,0,.18);border-radius:9px;border:1px solid rgba(255,255,255,.05);margin-top:6px;}
-        .attempt-logo-item{position:relative;width:42px;height:42px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;}
-        .attempt-logo-item img{width:33px;height:33px;object-fit:contain;}
+        .attempt-logo-item{position:relative;width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;}
+        .attempt-logo-item img{width:38px;height:38px;object-fit:contain;}
         .attempt-logo-item.correct{border-color:rgba(56,217,150,.38);background:rgba(56,217,150,.07);}
         .attempt-logo-item.incorrect{border-color:rgba(255,107,107,.28);background:rgba(255,107,107,.05);}
         .attempt-logo-check{position:absolute;bottom:1px;right:2px;font-size:8px;font-weight:900;line-height:1;}
-        .attempt-logo-blur{position:absolute;top:1px;left:2px;font-size:8px;font-weight:950;line-height:1;color:#f5f7ff;border-radius:999px;padding:2px 4px;background:rgba(255,209,102,.72);}
+        .attempt-logo-blur{position:absolute;top:1px;left:2px;font-size:9px;font-weight:950;line-height:1;color:#f5f7ff;border-radius:999px;padding:2px 5px;background:rgba(255,209,102,.78);}
         .attempt-logo-item.blur-hit .attempt-logo-blur{background:rgba(56,217,150,.74);}
         .attempt-logo-item.correct .attempt-logo-check{color:var(--good);}
         .attempt-logo-item.incorrect .attempt-logo-check{color:var(--bad);}
@@ -29011,6 +29024,17 @@
         .lb-row:nth-child(1) .lb-rank{color:#ffd166;}
         .lb-row:nth-child(2) .lb-rank{color:#aeb7d7;}
         .lb-row:nth-child(3) .lb-rank{color:#cd7f32;}
+        @media (min-width: 901px) {
+          .lb-panel-inline .lb-header .label{font-size:13px !important;}
+          .lb-panel-inline #lbKeySelect{font-size:13px !important;padding:8px 12px !important;border-radius:12px !important;}
+          .lb-panel-inline .lb-row{padding:20px 22px !important;gap:18px !important;border-radius:20px !important;}
+          .lb-panel-inline .lb-rank{font-size:22px !important;width:34px !important;}
+          .lb-panel-inline .lb-name{font-size:17px !important;}
+          .lb-panel-inline .lb-detail{font-size:14px !important;}
+          .lb-panel-inline .lb-score{font-size:28px !important;}
+          .lb-panel-inline .lb-score span{font-size:12px !important;}
+          .lb-panel-inline .lb-row img{width:44px !important;height:44px !important;}
+        }
       `;
       document.head.appendChild(st);
 
@@ -29117,7 +29141,7 @@
       const exitD = document.getElementById('arcadeExitDesktop');
       // Hide the old separate arcadeStats block entirely on desktop
       const arcadeStatsBlock = document.getElementById('arcadeStats');
-      if (arcadeStatsBlock) arcadeStatsBlock.style.display = 'none';
+      if (arcadeStatsBlock) arcadeStatsBlock.style.display = arcadeOn ? 'none' : '';
 
       if (arcadeOn) {
         if (label) label.textContent = `Arcade – ${dl}`;
