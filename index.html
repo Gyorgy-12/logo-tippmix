@@ -510,6 +510,10 @@
       white-space: nowrap;
     }
 
+    .stat > .score-delta {
+      display: none !important;
+    }
+
     .arcade-summary-card {
       background: rgba(0,0,0,.18);
       border: 1px solid rgba(255,255,255,.09);
@@ -27348,7 +27352,9 @@
 
     function displayAnswerName(item) {
       const fact = factFor(item);
-      const preferred = item.name || item.aliases?.[0] || fact?.aliases?.[0] || item.officialName || fact?.officialName;
+      const preferred = state.mode === "logo"
+        ? (fact?.officialName || item.officialName || fact?.aliases?.[0] || item.aliases?.[0] || item.name)
+        : (item.name || item.aliases?.[0] || item.officialName || fact?.officialName);
       return stripFourDigitYear(preferred || "");
     }
 
@@ -27679,13 +27685,14 @@
         return;
       }
       if (isCorrect(input, state.current)) {
+        const matchedName = matchedAnswerName(input, state.current);
         if (state.arcade.active) {
           ensureArcadeRuntime();
           state.arcade.streak++;
           state.arcade.bestStreak = Math.max(state.arcade.bestStreak || 0, state.arcade.streak);
           const earned = pointsForCorrectAnswer(state.current);
           state.lastEarned = earned;
-          $("message").textContent = `Jó válasz: ${displayAnswerName(state.current)}. +${earned} pont`;
+          $("message").textContent = `Jó válasz: ${matchedName}. +${earned} pont`;
           $("message").className = "message good";
           state.locked = true;
           showReveal(false);
@@ -27697,7 +27704,7 @@
           const earned = pointsForCorrectAnswer(state.current);
           state.lastEarned = earned;
           state.score += earned;
-          $("message").textContent = `Jó válasz: ${displayAnswerName(state.current)}. +${earned} pont`;
+          $("message").textContent = `Jó válasz: ${matchedName}. +${earned} pont`;
           $("message").className = "message good";
           state.locked = true;
           showReveal(false);
@@ -27922,7 +27929,7 @@
       return parts.length ? `<br><span>${parts.join(" - ")}</span>` : "";
     }
 
-    function allAnswers(item) {
+    function answerVariants(item) {
       const fact = factFor(item) || clubKnowledgeFor(item);
       const baseAliases = [
         item.name,
@@ -27950,14 +27957,30 @@
         fact?.officialName,
         ...cityAliases
       ].filter(Boolean);
-      const variants = new Set();
+      const variants = [];
+      const seen = new Set();
       raw.forEach(value => {
+        const display = stripFourDigitYear(value);
         const normalized = normalize(value);
-        const yearless = normalize(stripFourDigitYear(value));
-        if (normalized) variants.add(normalized);
-        if (yearless) variants.add(yearless);
+        const yearless = normalize(display);
+        [normalized, yearless].forEach(answer => {
+          if (!answer || seen.has(answer)) return;
+          seen.add(answer);
+          variants.push({ answer, display });
+        });
       });
-      return [...variants];
+      return variants;
+    }
+
+    function allAnswers(item) {
+      return answerVariants(item).map(variant => variant.answer);
+    }
+
+    function matchedAnswerName(input, item) {
+      const n = normalize(input);
+      if (!n) return displayAnswerName(item);
+      const match = answerVariants(item).find(variant => variant.answer === n);
+      return match?.display || displayAnswerName(item);
     }
 
     function isCorrect(input, item) {
